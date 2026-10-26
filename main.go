@@ -19,9 +19,15 @@ func main() {
 	mux.HandleFunc("/register", registerHandler)
 	mux.HandleFunc("/login", loginHandler)
 	mux.HandleFunc("/ws", handleWS)
-	mux.HandleFunc("/history", historyHandler)
-	mux.HandleFunc("/users", usersHandler)
-	mux.HandleFunc("/deleteHistory", deleteHistoryHandler)
+	mux.HandleFunc("GET /users", withAuth(usersHandler))
+	mux.HandleFunc("GET /conversations", withAuth(conversationsHandler))
+	mux.HandleFunc("POST /conversations", withAuth(createConversationHandler))
+	mux.HandleFunc("GET /conversations/{id}/messages", withAuth(messagesHandler))
+	mux.HandleFunc("DELETE /conversations/{id}/messages", withAuth(clearHistoryHandler))
+	mux.HandleFunc("POST /conversations/{id}/members", withAuth(addMembersHandler))
+	mux.HandleFunc("POST /conversations/{id}/leave", withAuth(leaveConversationHandler))
+	mux.HandleFunc("POST /upload", withAuth(uploadHandler))
+	mux.HandleFunc("GET /attachments/{id}", withAuth(attachmentHandler))
 
 	// Serve static frontend
 	mux.Handle("/", http.FileServer(http.Dir("./static")))
@@ -34,7 +40,7 @@ func main() {
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		// Handle preflight (OPTIONS) request

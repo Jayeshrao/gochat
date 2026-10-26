@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -34,4 +36,31 @@ func validateJWT(tokenStr string) (*Claims, error) {
 		return nil, err
 	}
 	return claims, nil
+}
+
+// authUser returns the username in the request's JWT. The token comes from an
+// "Authorization: Bearer" header, or from ?token= where a browser can't set
+// headers (WebSocket connections and <img src> attachment links).
+func authUser(r *http.Request) (string, bool) {
+	tokenStr := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	if tokenStr == "" {
+		tokenStr = r.URL.Query().Get("token")
+	}
+	claims, err := validateJWT(tokenStr)
+	if err != nil || claims == nil {
+		return "", false
+	}
+	return claims.Username, true
+}
+
+// withAuth rejects requests without a valid token and passes the username on
+func withAuth(h func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, ok := authUser(r)
+		if !ok {
+			writeJSONError(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		h(w, r, user)
+	}
 }

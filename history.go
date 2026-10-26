@@ -1,74 +1,98 @@
 package main
 
 import (
-	"encoding/json"
+	"log"
 	"net/http"
+	"strconv"
 )
 
-func historyHandler(w http.ResponseWriter, r *http.Request) {
-	user1 := r.URL.Query().Get("user1")
-	user2 := r.URL.Query().Get("user2")
+const (
+	defaultPageSize = 50
+	maxPageSize     = 100
+)
 
-	if user1 == "" || user2 == "" {
-		writeJSONError(w, "Missing user1 or user2", http.StatusBadRequest)
-		return
-	}
-
-	rows, err := db.Query(`
-		SELECT id, sender, receiver, content, created_at
-		FROM messages
-		WHERE (sender = ? AND receiver = ?)
-		   OR (sender = ? AND receiver = ?)
-		ORDER BY created_at ASC
-	`, user1, user2, user2, user1)
+// GET /conversations/{id}/messages?before_id=123&limit=50
+//
+// Returns the newest messages, or with before_id the ones just older than it,
+// oldest first. has_more says whether there's another page further back.
+func messagesHandler(w http.ResponseWriter, r *http.Request, user string) {
+	convID, err := pathID(r)
 	if err != nil {
-		writeJSONError(w, "DB error", http.StatusInternalServerError)
+		writeError(w, err)
 		return
 	}
-	defer rows.Close()
-
-	var history []Message
-	for rows.Next() {
-		var msg Message
-		if err := rows.Scan(&msg.ID, &msg.Sender, &msg.Receiver, &msg.Content, &msg.CreatedAt); err == nil {
-			history = append(history, msg)
-		}
+	if _, err := membersFor(convID, user); err != nil {
+		writeError(w, err)
+		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(history)
+	q := r.URL.Query()
+	beforeID, _ := strconv.ParseInt(q.Get("before_id"), 10, 64)
+	limit, err := strconv.Atoi(q.Get("limit"))
+	if err != nil || limit <= 0 {
+		limit = defaultPageSize
+	}
+	limit = min(limit, maxPageSize)
+
+	msgs, hasMore, err := messagesPage(convID, beforeID, limit)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"messages": msgs,
+		"has_more": hasMore,
+	})
 }
 
-func deleteHistoryHandler(w http.ResponseWriter, r *http.Request) {
-    // Only allow DELETE method
-    if r.Method != http.MethodDelete {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
+// DELETE /conversations/{id}/messages wipes the whole history for everyone.
+// Either side of a DM may do it; in a group only its creator can.
+func clearHistoryHandler(w http.ResponseWriter, r *http.Request, user string) {
+	convID, err := pathID(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	members, err := membersFor(convID, user)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
 
-    // Get usernames from query
-    user1 := r.URL.Query().Get("user1")
-    user2 := r.URL.Query().Get("user2")
+	var kind, createdBy string
+	if err := db.QueryRow("SELECT kind, created_by FROM conversations WHERE id = ?", convID).Scan(&kind, &createdBy); err != nil {
+		writeError(w, err)
+		return
+	}
+	if kind == "group" && createdBy != user {
+		writeJSONError(w, "Only the group's creator can clear its history", http.StatusForbidden)
+		return
+	}
 
-    if user1 == "" || user2 == "" {
-        http.Error(w, "Missing users", http.StatusBadRequest)
-        return
-    }
+	rows, err := db.Query("SELECT attachment_id FROM messages WHERE conversation_id = ? AND attachment_id IS NOT NULL", convID)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	var attachments []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err == nil {
+			attachments = append(attachments, id)
+		}
+	}
+	rows.Close()
 
-    // Delete messages between these two users
-    _, err := db.Exec(`
-        DELETE FROM messages
-        WHERE (sender = ? AND receiver = ?)
-           OR (sender = ? AND receiver = ?)`,
-        user1, user2, user2, user1,
-    )
-    if err != nil {
-        http.Error(w, "Error deleting messages", http.StatusInternalServerError)
-        return
-    }
+	if _, err := db.Exec("DELETE FROM messages WHERE conversation_id = ?", convID); err != nil {
+		writeError(w, err)
+		return
+	}
+	removeAttachments(attachments)
+	log.Printf("🗑️ %s cleared the history of conversation %d\n", user, convID)
 
-    json.NewEncoder(w).Encode(map[string]string{
-        "status": "success",
-        "message": "Chat history deleted",
-    })
+	chatHub.sendToUsers(members, conversationIDEvent{Type: evCleared, ConversationID: convID})
+	writeJSON(w, http.StatusOK, map[string]string{
+		"status":  "success",
+		"message": "Chat history deleted",
+	})
 }

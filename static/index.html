@@ -56,7 +56,7 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    
+
     <!-- Authentication Screen -->
     <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md animate-fade-in">
@@ -73,19 +73,19 @@
             <div class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                    <input 
-                        id="username" 
-                        type="text" 
+                    <input
+                        id="username"
+                        type="text"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your username"
                     />
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input 
-                        id="password" 
-                        type="password" 
+                    <input
+                        id="password"
+                        type="password"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your password"
                     />
@@ -93,7 +93,7 @@
 
                 <div id="authError" class="hidden bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm"></div>
 
-                <button 
+                <button
                     id="authBtn"
                     class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
@@ -103,7 +103,7 @@
             </div>
 
             <div class="mt-6 text-center">
-                <button 
+                <button
                     id="toggleAuth"
                     class="text-blue-500 hover:text-blue-600 font-medium transition-colors duration-200"
                 >
@@ -115,7 +115,7 @@
 
     <!-- Main Chat Interface -->
     <div id="chatScreen" class="hidden h-screen bg-gray-100 flex">
-        
+
         <!-- Sidebar -->
         <div id="sidebar" class="w-full md:w-80 bg-white border-r border-gray-200 flex flex-col shadow-lg">
             <!-- Header -->
@@ -129,13 +129,14 @@
                     <div>
                         <h2 id="currentUsername" class="font-semibold"></h2>
                         <p class="text-blue-100 text-sm flex items-center">
-                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                            Online
+                            <span id="connectionDot" class="w-2 h-2 bg-yellow-300 rounded-full mr-2"></span>
+                            <span id="connectionText">Connecting…</span>
                         </p>
                     </div>
                 </div>
-                <button 
+                <button
                     id="logoutBtn"
+                    title="Log out"
                     class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition-all duration-200"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,30 +145,33 @@
                 </button>
             </div>
 
-            <!-- Users List Header -->
-            <div class="p-4 border-b border-gray-200">
-                <div class="flex items-center space-x-2 text-gray-600">
+            <div class="flex-1 overflow-y-auto scrollbar-hide">
+                <!-- Conversations -->
+                <div class="px-4 pt-4 pb-2 flex items-center justify-between border-b border-gray-200">
+                    <span class="font-medium text-gray-600">Chats</span>
+                    <button id="newGroupBtn" title="New group" class="flex items-center space-x-1 text-sm text-blue-500 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>New group</span>
+                    </button>
+                </div>
+                <div id="conversationList"></div>
+
+                <!-- People -->
+                <div class="px-4 pt-6 pb-2 border-b border-gray-200 flex items-center space-x-2 text-gray-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                     </svg>
-                    <span class="font-medium">Users (<span id="userCount">0</span>)</span>
+                    <span class="font-medium">People <span id="onlineCount" class="font-normal text-sm text-gray-400"></span></span>
                 </div>
-            </div>
-
-            <!-- Users List -->
-            <div id="usersList" class="flex-1 overflow-y-auto scrollbar-hide">
-                <div id="noUsersMsg" class="p-4 text-center text-gray-500">
-                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                    </svg>
-                    <p>No other users online</p>
-                </div>
+                <div id="peopleList"></div>
             </div>
         </div>
 
         <!-- Chat Area -->
-        <div id="chatArea" class="flex-1 flex flex-col">
-            
+        <div id="chatArea" class="flex-1 flex flex-col min-w-0">
+
             <!-- Welcome Screen -->
             <div id="welcomeScreen" class="flex-1 flex items-center justify-center bg-gray-50">
                 <div class="text-center text-gray-500">
@@ -180,65 +184,90 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                     </svg>
                     <h3 class="text-xl font-medium text-gray-600 mb-2">Select a conversation</h3>
-                    <p class="text-gray-500">Choose a user from the sidebar to start chatting</p>
+                    <p class="text-gray-500">Choose a chat or a person from the sidebar to start chatting</p>
                 </div>
             </div>
 
             <!-- Chat Window -->
-            <div id="chatWindow" class="hidden flex-1 flex flex-col">
-                
+            <div id="chatWindow" class="hidden flex-1 flex flex-col min-h-0">
+
                 <!-- Chat Header -->
                 <div class="bg-white border-b border-gray-200 p-4 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-3 min-w-0">
                         <button id="backBtn" class="hidden p-2 hover:bg-gray-100 rounded-lg transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                             </svg>
                         </button>
-                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full w-10 h-10 flex items-center justify-center">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 id="selectedUserName" class="font-semibold text-gray-800"></h2>
-                            <p class="text-sm text-green-500 flex items-center">
-                                <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                                Online
-                            </p>
+                        <div id="chatAvatar"></div>
+                        <div class="min-w-0">
+                            <h2 id="chatTitle" class="font-semibold text-gray-800 truncate"></h2>
+                            <p id="chatSubtitle" class="text-sm text-gray-500 truncate"></p>
                         </div>
                     </div>
-                    <button 
-                        id="deleteHistoryBtn"
-                        class="p-2 text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
+                    <div class="flex items-center space-x-1 flex-shrink-0">
+                        <button id="addMembersBtn" title="Add people" class="hidden p-2 text-gray-500 hover:text-blue-500 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                        </button>
+                        <button id="leaveGroupBtn" title="Leave group" class="hidden p-2 text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                        <button
+                            id="deleteHistoryBtn"
+                            title="Clear history"
+                            class="p-2 text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Messages Container -->
-                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 scrollbar-hide">
-                    <div id="noMessagesMsg" class="text-center text-gray-500 mt-8">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
-                        <p>No messages yet. Start a conversation!</p>
-                    </div>
+                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50 scrollbar-hide">
+                    <div id="messageList"></div>
                 </div>
 
                 <!-- Message Input -->
                 <div class="bg-white border-t border-gray-200 p-4 shadow-sm">
+                    <div id="editBar" class="hidden mb-2 flex items-center justify-between text-sm bg-blue-50 text-blue-700 rounded-lg px-3 py-2">
+                        <span>Editing message · Enter to save, Esc to cancel</span>
+                        <button id="cancelEditBtn" class="font-medium hover:text-blue-900">Cancel</button>
+                    </div>
+                    <div id="attachmentBar" class="hidden mb-2 flex items-center justify-between text-sm bg-gray-100 text-gray-700 rounded-lg px-3 py-2">
+                        <span id="attachmentName" class="truncate"></span>
+                        <button id="removeAttachmentBtn" title="Remove attachment" class="ml-2 text-gray-500 hover:text-red-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                     <div class="flex items-center space-x-3">
-                        <input 
+                        <input id="fileInput" type="file" class="hidden" />
+                        <button
+                            id="attachBtn"
+                            title="Attach an image or file (max 10 MB)"
+                            class="p-3 text-gray-500 hover:text-blue-500 hover:bg-gray-100 rounded-full transition-all duration-200"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                        </button>
+                        <input
                             id="messageInput"
-                            type="text" 
+                            type="text"
                             placeholder="Type a message..."
-                            class="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            maxlength="4000"
+                            class="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         />
-                        <button 
+                        <button
                             id="sendBtn"
+                            title="Send"
                             class="send-btn bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white p-3 rounded-full transition-all duration-200 shadow-lg"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,16 +280,69 @@
         </div>
     </div>
 
+    <!-- New group / add people dialog -->
+    <div id="groupModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-40">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 animate-fade-in">
+            <h3 id="groupModalTitle" class="text-lg font-semibold text-gray-800 mb-4">New group</h3>
+            <input
+                id="groupNameInput"
+                type="text"
+                maxlength="64"
+                placeholder="Group name"
+                class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <p class="text-sm text-gray-500 mb-2">Members</p>
+            <div id="groupUserList" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg divide-y divide-gray-100"></div>
+            <div id="groupModalError" class="hidden mt-3 bg-red-50 border border-red-200 rounded-lg p-2 text-red-600 text-sm"></div>
+            <div class="flex justify-end space-x-2 mt-4">
+                <button id="groupCancelBtn" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+                <button id="groupSubmitBtn" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium rounded-lg shadow">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg z-50"></div>
+
     <script>
-    // Global variables
+    const API_BASE = 'http://localhost:8080'; // backend port
+    const WS_BASE = API_BASE.replace(/^http/, 'ws');
+    const PAGE_SIZE = 50;
+    const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+    const INLINE_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+    const TYPING_REFRESH_MS = 3000; // re-announce typing this often while typing
+    const TYPING_IDLE_MS = 4000;    // stop announcing after this long without a keystroke
+    const TYPING_EXPIRE_MS = 6000;  // forget someone's typing if no refresh arrives
+
+    // Session
     let currentUser = '';
     let token = '';
-    let selectedUser = '';
     let ws = null;
-    let users = [];
-    let messages = [];
+    let reconnectTimer = null;
+    let reconnectDelay = 1000;
+    let needsResync = false;        // we may have missed events, reload on the next connect
+
+    // Data
+    let users = [];                 // everyone but me: [{ username, online }]
+    let onlineUsers = new Set();
+    let conversations = [];         // most recently active first
+    let activeId = null;            // the conversation open in the chat window
+    let messages = [];              // its loaded messages, oldest first
+    let hasMore = false;            // older messages exist on the server
+    let loadingOlder = false;
+    let atBottom = true;
+    const typing = {};              // conversationId -> { username: expiry timer }
+
+    // Composer
+    let editingId = null;
+    let pendingAttachment = null;
+    let uploading = false;
+    let typingConvId = null;        // where we last said we're typing
+    let typingLastSent = 0;
+    let typingStopTimer = null;
+
     let isRegistering = false;
     let isMobile = window.innerWidth < 768;
+    let groupModalMode = 'create';  // or 'add'
 
     // DOM elements
     const authScreen = document.getElementById('authScreen');
@@ -275,22 +357,56 @@
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const currentUsername = document.getElementById('currentUsername');
-    const usersList = document.getElementById('usersList');
-    const userCount = document.getElementById('userCount');
-    const noUsersMsg = document.getElementById('noUsersMsg');
+    const connectionDot = document.getElementById('connectionDot');
+    const connectionText = document.getElementById('connectionText');
+    const conversationList = document.getElementById('conversationList');
+    const peopleList = document.getElementById('peopleList');
+    const onlineCount = document.getElementById('onlineCount');
+    const newGroupBtn = document.getElementById('newGroupBtn');
     const welcomeScreen = document.getElementById('welcomeScreen');
     const chatWindow = document.getElementById('chatWindow');
-    const selectedUserName = document.getElementById('selectedUserName');
+    const chatAvatar = document.getElementById('chatAvatar');
+    const chatTitle = document.getElementById('chatTitle');
+    const chatSubtitle = document.getElementById('chatSubtitle');
+    const addMembersBtn = document.getElementById('addMembersBtn');
+    const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+    const deleteHistoryBtn = document.getElementById('deleteHistoryBtn');
     const messagesContainer = document.getElementById('messagesContainer');
-    const noMessagesMsg = document.getElementById('noMessagesMsg');
+    const messageList = document.getElementById('messageList');
+    const editBar = document.getElementById('editBar');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const attachmentBar = document.getElementById('attachmentBar');
+    const attachmentName = document.getElementById('attachmentName');
+    const removeAttachmentBtn = document.getElementById('removeAttachmentBtn');
+    const fileInput = document.getElementById('fileInput');
+    const attachBtn = document.getElementById('attachBtn');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const deleteHistoryBtn = document.getElementById('deleteHistoryBtn');
     const sidebar = document.getElementById('sidebar');
     const chatArea = document.getElementById('chatArea');
     const backBtn = document.getElementById('backBtn');
     const mobileUsersBtn = document.getElementById('mobileUsersBtn');
+    const groupModal = document.getElementById('groupModal');
+    const groupModalTitle = document.getElementById('groupModalTitle');
+    const groupNameInput = document.getElementById('groupNameInput');
+    const groupUserList = document.getElementById('groupUserList');
+    const groupModalError = document.getElementById('groupModalError');
+    const groupCancelBtn = document.getElementById('groupCancelBtn');
+    const groupSubmitBtn = document.getElementById('groupSubmitBtn');
+    const toast = document.getElementById('toast');
+
+    // Icons
+    const ICONS = {
+        group: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
+        edit: 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z',
+        trash: 'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16',
+        file: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z',
+    };
+
+    function icon(name, cls = 'w-5 h-5') {
+        return `<svg class="${cls}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${ICONS[name]}"></path></svg>`;
+    }
 
     // Utility functions
     function showError(message) {
@@ -314,22 +430,69 @@
         }
     }
 
+    let toastTimer = null;
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    // Everything user-supplied goes through this before it touches innerHTML
+    function escapeHtml(text) {
+        return String(text ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    // Expects already-escaped text
+    function linkify(text) {
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+        return text.replace(urlRegex, function(url) {
+            let hyperlink = url;
+            if (!hyperlink.startsWith('http')) {
+                hyperlink = 'http://' + hyperlink;
+            }
+            return `<a href="${hyperlink}" target="_blank" rel="noopener noreferrer" class="underline">${url}</a>`;
+        });
+    }
+
     function formatTime(timestamp) {
         return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
+    // Sidebar timestamps: time today, weekday this week, date before that
+    function formatListTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        if (date.toDateString() === now.toDateString()) return formatTime(timestamp);
+        if (now - date < 6 * 24 * 3600 * 1000) return date.toLocaleDateString([], { weekday: 'short' });
+        return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function pageIsActive() {
+        return document.visibilityState === 'visible' && document.hasFocus();
+    }
+
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        atBottom = true;
     }
 
     function updateResponsive() {
         isMobile = window.innerWidth < 768;
-        
+
         if (isMobile) {
             backBtn.classList.remove('hidden');
             mobileUsersBtn.classList.remove('hidden');
-            
-            if (selectedUser) {
+
+            if (activeId) {
                 sidebar.classList.add('hidden');
                 chatArea.classList.remove('hidden');
             } else {
@@ -344,23 +507,63 @@
         }
     }
 
+    // Conversation helpers
+    function findConversation(id) {
+        return conversations.find(c => c.id === id);
+    }
+
+    function otherMember(conv) {
+        return conv.members.find(m => m.username !== currentUser)?.username || '?';
+    }
+
+    function conversationName(conv) {
+        return conv.kind === 'group' ? conv.name : otherMember(conv);
+    }
+
+    function myLastRead(conv) {
+        return conv.members.find(m => m.username === currentUser)?.last_read_id || 0;
+    }
+
+    function sortConversations() {
+        const activity = c => new Date(c.last_message?.created_at || c.created_at).getTime();
+        conversations.sort((a, b) => activity(b) - activity(a) || b.id - a.id);
+    }
+
+    function typingNames(convId) {
+        return Object.keys(typing[convId] || {});
+    }
+
+    function typingText(conv, names) {
+        if (conv.kind === 'dm') return 'typing…';
+        if (names.length === 1) return `${names[0]} is typing…`;
+        if (names.length === 2) return `${names[0]} and ${names[1]} are typing…`;
+        return 'Several people are typing…';
+    }
+
+    function attachmentUrl(att, download = false) {
+        // <img> and download links can't send an Authorization header
+        return `${API_BASE}/attachments/${att.id}?token=${encodeURIComponent(token)}${download ? '&download=1' : ''}`;
+    }
+
     // API functions
     async function apiCall(endpoint, options = {}) {
-        const baseUrl = "http://localhost:8080"; // backend port
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            ...options,
             headers: {
-                'Content-Type': 'application/json',
+                // Let the browser set the multipart boundary for uploads
+                ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
                 ...(token && { 'Authorization': `Bearer ${token}` })
-            },
-            ...options
+            }
         });
-        
-        if (!response.ok) {
-            const text = await response.text();
-            throw new Error(text || 'Network error');
+        const data = await response.json().catch(() => null);
+
+        if (response.status === 401 && token) {
+            logout(); // token expired
         }
-        
-        return response.json();
+        if (!response.ok) {
+            throw new Error(data?.error || `Request failed (${response.status})`);
+        }
+        return data;
     }
 
     async function handleAuth() {
@@ -385,17 +588,11 @@
             if (data.token) {
                 token = data.token;
                 currentUser = username;
-                currentUsername.textContent = username;
-                
+
                 localStorage.setItem('chatToken', token);
                 localStorage.setItem('chatUser', username);
-                
-                authScreen.classList.add('hidden');
-                chatScreen.classList.remove('hidden');
-                
-                await fetchUsers();
-                setupWebSocket();
-                updateResponsive();
+
+                await startSession();
             }
         } catch (err) {
             showError(err.message);
@@ -404,204 +601,891 @@
         }
     }
 
-    async function fetchUsers() {
-    try {
-        const data = await apiCall('/users');
-        // if backend returns array directly, use data
-        users = (Array.isArray(data) ? data : data.users || []).filter(user => user !== currentUser);
-        renderUsers();
-    } catch (err) {
-        console.error('Failed to fetch users:', err);
-    }
-}
+    async function startSession() {
+        currentUsername.textContent = currentUser;
+        authScreen.classList.add('hidden');
+        chatScreen.classList.remove('hidden');
+        updateResponsive();
+        renderConversations();
 
-    async function fetchHistory(user1, user2) {
         try {
-            const data = await apiCall(`/history?user1=${user1}&user2=${user2}`);
-            messages = data || [];
-            renderMessages();
+            await Promise.all([loadUsers(), loadConversations()]);
         } catch (err) {
-            console.error('Failed to fetch history:', err);
-            messages = [];
-            renderMessages();
+            console.error('Failed to load chats:', err);
+            needsResync = true;
         }
+        // A 401 above logs out and clears the token
+        if (token) connectWS();
+    }
+
+    async function loadUsers() {
+        const data = await apiCall('/users');
+        const all = data.users || [];
+        users = all.filter(u => u.username !== currentUser);
+        onlineUsers = new Set(all.filter(u => u.online).map(u => u.username));
+        renderPeople();
+        renderConversations();
+    }
+
+    async function loadConversations() {
+        const data = await apiCall('/conversations');
+        const fresh = data.conversations || [];
+        // The server leaves out DMs nobody has written in yet; keep the one that's open
+        const active = findConversation(activeId);
+        if (active && active.kind === 'dm' && !fresh.some(c => c.id === active.id)) {
+            fresh.push(active);
+        }
+        conversations = fresh;
+        sortConversations();
+        renderConversations();
+        if (activeId && !findConversation(activeId)) {
+            closeChat();
+        } else if (activeId) {
+            renderChatHeader();
+        }
+    }
+
+    // The newest page of the open conversation
+    async function loadMessages() {
+        const id = activeId;
+        try {
+            const data = await apiCall(`/conversations/${id}/messages?limit=${PAGE_SIZE}`);
+            if (id !== activeId) return; // switched conversations meanwhile
+
+            const page = data.messages || [];
+            const newestLoaded = page.length ? page[page.length - 1].id : 0;
+            // Keep anything that arrived over the WebSocket while this was loading
+            const arrived = messages.filter(m => m.conversation_id === id && m.id > newestLoaded);
+            messages = [...page, ...arrived];
+            hasMore = data.has_more;
+            renderMessages('bottom');
+            markRead();
+            fillViewport();
+        } catch (err) {
+            if (id !== activeId) return;
+            console.error('Failed to fetch history:', err);
+            showToast(err.message);
+        }
+    }
+
+    // The page before the oldest loaded message, keeping the view where it was
+    async function loadOlder() {
+        if (!hasMore || loadingOlder || !messages.length) return;
+        loadingOlder = true;
+        const id = activeId;
+        try {
+            const data = await apiCall(`/conversations/${id}/messages?before_id=${messages[0].id}&limit=${PAGE_SIZE}`);
+            if (id !== activeId) return;
+
+            const oldHeight = messagesContainer.scrollHeight;
+            const oldTop = messagesContainer.scrollTop;
+            messages = [...(data.messages || []), ...messages];
+            hasMore = data.has_more;
+            renderMessages('none');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - oldHeight + oldTop;
+            fillViewport();
+        } catch (err) {
+            console.error('Failed to fetch older messages:', err);
+            showToast(err.message);
+        } finally {
+            loadingOlder = false;
+        }
+    }
+
+    // A short page doesn't scroll, so nothing would ever trigger loadOlder
+    function fillViewport() {
+        if (hasMore && messagesContainer.scrollHeight <= messagesContainer.clientHeight + 120) {
+            loadOlder();
+        }
+    }
+
+    async function openDM(username) {
+        try {
+            const conv = await apiCall('/conversations', {
+                method: 'POST',
+                body: JSON.stringify({ kind: 'dm', username })
+            });
+            if (!findConversation(conv.id)) {
+                conversations.push(conv);
+                sortConversations();
+            }
+            openConversation(conv.id);
+        } catch (err) {
+            showToast(err.message);
+        }
+    }
+
+    async function openConversation(id) {
+        if (activeId !== id) {
+            stopTyping();
+            cancelEdit();
+            clearAttachment();
+            messageInput.value = '';
+        }
+        activeId = id;
+        messages = [];
+        hasMore = false;
+
+        welcomeScreen.classList.add('hidden');
+        chatWindow.classList.remove('hidden');
+        messageList.innerHTML = '<div class="text-center text-gray-400 mt-8">Loading messages…</div>';
+        renderChatHeader();
+        renderConversations();
+        updateResponsive();
+
+        await loadMessages();
+        if (!isMobile && id === activeId) messageInput.focus();
+    }
+
+    function closeChat() {
+        stopTyping();
+        cancelEdit();
+        clearAttachment();
+        activeId = null;
+        messages = [];
+        chatWindow.classList.add('hidden');
+        welcomeScreen.classList.remove('hidden');
+        renderConversations();
+        updateResponsive();
     }
 
     async function deleteHistory() {
-        if (!selectedUser || !confirm('Delete all chat history with this user?')) return;
+        const conv = findConversation(activeId);
+        const question = conv?.kind === 'group'
+            ? 'Delete every message in this group, for everyone?'
+            : 'Delete all chat history with this user?';
+        if (!conv || !confirm(question)) return;
 
         try {
-            await apiCall(`/deleteHistory?user1=${currentUser}&user2=${selectedUser}`, {
+            await apiCall(`/conversations/${conv.id}/messages`, {
                 method: 'DELETE'
             });
-            messages = [];
-            renderMessages();
+            onCleared(conv.id);
         } catch (err) {
-            alert('Failed to delete history');
+            showToast(err.message || 'Failed to delete history');
         }
     }
 
-    function setupWebSocket() {
-        const wsUrl = `ws://localhost:8080/ws?token=${token}`;
-        ws = new WebSocket(wsUrl);
+    async function leaveGroup() {
+        const conv = findConversation(activeId);
+        if (!conv || !confirm(`Leave "${conv.name}"?`)) return;
+        try {
+            await apiCall(`/conversations/${conv.id}/leave`, { method: 'POST' });
+            removeConversation(conv.id);
+        } catch (err) {
+            showToast(err.message);
+        }
+    }
 
-        ws.onopen = () => {
+    // WebSocket
+    function setConnectionStatus(connected) {
+        connectionDot.className = `w-2 h-2 rounded-full mr-2 ${connected ? 'bg-green-400' : 'bg-yellow-300'}`;
+        connectionText.textContent = connected ? 'Online' : 'Connecting…';
+    }
+
+    function connectWS() {
+        clearTimeout(reconnectTimer);
+        setConnectionStatus(false);
+        const socket = new WebSocket(`${WS_BASE}/ws?token=${encodeURIComponent(token)}`);
+        ws = socket;
+
+        socket.onopen = () => {
             console.log('WebSocket connected');
+            reconnectDelay = 1000;
+            setConnectionStatus(true);
+            // Catch up on whatever happened while we were disconnected
+            if (needsResync) resync();
+            needsResync = false;
         };
 
-        ws.onmessage = (event) => {
+        socket.onmessage = (event) => {
+            let ev;
             try {
-                const message = JSON.parse(event.data);
-                messages.push(message);
-                renderMessages();
+                ev = JSON.parse(event.data);
             } catch (err) {
-                console.error('Failed to parse message:', err);
+                console.error('Failed to parse event:', err);
+                return;
             }
+            handleEvent(ev);
         };
 
-        ws.onclose = () => {
+        socket.onclose = () => {
+            if (ws !== socket) return; // logged out, or already replaced
             console.log('WebSocket disconnected');
             ws = null;
+            needsResync = true;
+            setConnectionStatus(false);
+            reconnectTimer = setTimeout(reconnect, reconnectDelay);
+            reconnectDelay = Math.min(reconnectDelay * 2, 15000);
         };
 
-        ws.onerror = (err) => {
+        socket.onerror = (err) => {
             console.error('WebSocket error:', err);
         };
     }
 
-    function sendMessage() {
-        const messageText = messageInput.value.trim();
-        if (!messageText || !selectedUser || !ws) return;
-
-        const message = {
-            to: selectedUser,
-            content: messageText
-        };
-
-        ws.send(JSON.stringify(message));
-
-        // Show own message instantly
-        messages.push({
-            sender: currentUser,
-            receiver: selectedUser,
-            content: messageText,
-            created_at: new Date().toISOString()
-        });
-
-        renderMessages();
-        messageInput.value = '';
+    async function reconnect() {
+        if (!token) return;
+        // An expired token makes the WebSocket fail without saying why; a REST call
+        // gets a clear 401, which logs out instead of retrying forever
+        try {
+            await apiCall('/users');
+        } catch (err) {
+            if (!token) return;
+        }
+        connectWS();
     }
 
-    // Render functions
-    function renderUsers() {
-        userCount.textContent = users.length;
-        
-        if (users.length === 0) {
-            noUsersMsg.style.display = 'block';
-            usersList.innerHTML = '<div class="p-4 text-center text-gray-500">No other users online</div>';
+    async function resync() {
+        try {
+            await Promise.all([loadUsers(), loadConversations()]);
+            if (activeId) await loadMessages();
+        } catch (err) {
+            console.error('Resync failed:', err);
+        }
+    }
+
+    function sendEvent(ev, quiet = false) {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            if (!quiet) showToast('Not connected. Reconnecting…');
+            return false;
+        }
+        ws.send(JSON.stringify(ev));
+        return true;
+    }
+
+    function handleEvent(ev) {
+        switch (ev.type) {
+            case 'hello':
+                onlineUsers = new Set(ev.online);
+                renderPresence();
+                break;
+            case 'presence':
+                if (ev.online) onlineUsers.add(ev.user);
+                else onlineUsers.delete(ev.user);
+                // Someone who registered after we loaded the list
+                if (ev.user !== currentUser && !users.some(u => u.username === ev.user)) loadUsers();
+                renderPresence();
+                break;
+            case 'message':
+                onMessage(ev.message);
+                break;
+            case 'edit':
+            case 'delete':
+                onMessageChanged(ev.message, ev.type);
+                break;
+            case 'typing':
+                onTyping(ev);
+                break;
+            case 'read':
+                onRead(ev);
+                break;
+            case 'conversation':
+                upsertConversation(ev.conversation);
+                break;
+            case 'left':
+                removeConversation(ev.conversation_id);
+                break;
+            case 'cleared':
+                onCleared(ev.conversation_id);
+                break;
+            case 'error':
+                showToast(ev.error);
+                break;
+            default:
+                console.warn('Unknown event:', ev);
+        }
+    }
+
+    function onMessage(msg) {
+        const conv = findConversation(msg.conversation_id);
+        if (!conv) {
+            // A conversation we haven't seen yet, e.g. someone's first DM to us
+            loadConversations().catch(err => console.error(err));
+            return;
+        }
+        const mine = msg.sender === currentUser;
+        conv.last_message = msg;
+        // Sending a message means the sender has read everything before it
+        const sender = conv.members.find(m => m.username === msg.sender);
+        if (sender) sender.last_read_id = Math.max(sender.last_read_id, msg.id);
+        clearTyping(conv.id, msg.sender);
+
+        if (conv.id === activeId && !messages.some(m => m.id === msg.id)) {
+            const follow = atBottom || mine;
+            messages.push(msg);
+            renderMessages(follow ? 'bottom' : 'keep', msg.id);
+            markRead();
+        }
+        if (!mine && !(conv.id === activeId && pageIsActive())) {
+            conv.unread_count++;
+        }
+        sortConversations();
+        renderConversations();
+    }
+
+    function onMessageChanged(msg, type) {
+        const conv = findConversation(msg.conversation_id);
+        if (!conv) return;
+        if (conv.last_message?.id === msg.id) conv.last_message = msg;
+        if (type === 'delete' && msg.sender !== currentUser && msg.id > myLastRead(conv) && conv.unread_count > 0) {
+            conv.unread_count--;
+        }
+        if (conv.id === activeId) {
+            const i = messages.findIndex(m => m.id === msg.id);
+            if (i >= 0) {
+                messages[i] = msg;
+                renderMessages('keep');
+            }
+        }
+        if (type === 'delete' && editingId === msg.id) cancelEdit();
+        renderConversations();
+    }
+
+    function onTyping(ev) {
+        const convTyping = typing[ev.conversation_id] ||= {};
+        clearTimeout(convTyping[ev.user]);
+        if (ev.typing) {
+            convTyping[ev.user] = setTimeout(() => clearTyping(ev.conversation_id, ev.user), TYPING_EXPIRE_MS);
+        } else {
+            delete convTyping[ev.user];
+        }
+        renderTyping(ev.conversation_id);
+    }
+
+    function clearTyping(convId, user) {
+        const convTyping = typing[convId];
+        if (!convTyping || !(user in convTyping)) return;
+        clearTimeout(convTyping[user]);
+        delete convTyping[user];
+        renderTyping(convId);
+    }
+
+    function onRead(ev) {
+        const conv = findConversation(ev.conversation_id);
+        if (!conv) return;
+        const member = conv.members.find(m => m.username === ev.user);
+        if (member) {
+            member.last_read_id = Math.max(member.last_read_id, ev.message_id);
+            member.read_at = ev.read_at;
+        }
+        // We read it (maybe in another tab)
+        if (ev.user === currentUser && ev.message_id >= (conv.last_message?.id || 0)) {
+            conv.unread_count = 0;
+        }
+        if (conv.id === activeId) renderMessages('keep');
+        renderConversations();
+    }
+
+    function upsertConversation(conv) {
+        const i = conversations.findIndex(c => c.id === conv.id);
+        if (i >= 0) conversations[i] = conv;
+        else conversations.push(conv);
+        sortConversations();
+        renderConversations();
+        if (conv.id === activeId) {
+            renderChatHeader();
+            renderMessages('keep');
+        }
+    }
+
+    function removeConversation(id) {
+        conversations = conversations.filter(c => c.id !== id);
+        if (id === activeId) closeChat();
+        renderConversations();
+    }
+
+    function onCleared(id) {
+        const conv = findConversation(id);
+        if (!conv) return;
+        conv.last_message = null;
+        conv.unread_count = 0;
+        if (id === activeId) {
+            messages = [];
+            hasMore = false;
+            cancelEdit();
+            renderMessages();
+        }
+        renderConversations();
+    }
+
+    // Read receipts: tell the others we've seen the newest message
+    function markRead() {
+        const conv = findConversation(activeId);
+        if (!conv || !messages.length || !pageIsActive()) return;
+        const newest = messages[messages.length - 1];
+        if (myLastRead(conv) >= newest.id) return;
+        sendEvent({ type: 'read', conversation_id: conv.id, message_id: newest.id }, true);
+    }
+
+    // Typing indicator: announce on keystrokes, refreshed while typing continues
+    function onComposerInput() {
+        if (!activeId || editingId) return;
+        if (!messageInput.value.trim()) {
+            stopTyping();
+            return;
+        }
+        if (typingConvId && typingConvId !== activeId) stopTyping();
+        const now = Date.now();
+        if (typingConvId !== activeId || now - typingLastSent > TYPING_REFRESH_MS) {
+            sendEvent({ type: 'typing', conversation_id: activeId, typing: true }, true);
+            typingConvId = activeId;
+            typingLastSent = now;
+        }
+        clearTimeout(typingStopTimer);
+        typingStopTimer = setTimeout(stopTyping, TYPING_IDLE_MS);
+    }
+
+    function stopTyping() {
+        clearTimeout(typingStopTimer);
+        if (typingConvId) {
+            sendEvent({ type: 'typing', conversation_id: typingConvId, typing: false }, true);
+        }
+        typingConvId = null;
+    }
+
+    function sendMessage() {
+        if (!activeId || uploading) return;
+        const messageText = messageInput.value.trim();
+
+        if (editingId) {
+            const original = messages.find(m => m.id === editingId);
+            if (!messageText && !original?.attachment) return;
+            if (sendEvent({ type: 'edit', message_id: editingId, content: messageText })) cancelEdit();
             return;
         }
 
-        usersList.innerHTML = users.map(user => `
-            <div class="user-item p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${selectedUser === user ? 'bg-blue-50 border-blue-200' : ''}" 
-                 onclick="selectUser('${user}')">
-                <div class="flex items-center space-x-3 animate-slide-in">
-                    <div class="${selectedUser === user ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'} w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200">
-                        ${user.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-gray-800">${user}</h3>
-                        <p class="text-sm text-green-500 flex items-center">
-                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                            Online
-                        </p>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+        if (!messageText && !pendingAttachment) return;
+        const message = {
+            type: 'message',
+            conversation_id: activeId,
+            content: messageText
+        };
+        if (pendingAttachment) message.attachment_id = pendingAttachment.id;
+
+        // The server echoes it back as a "message" event, which is when it appears
+        if (!sendEvent(message)) return;
+        stopTyping();
+        messageInput.value = '';
+        clearAttachment();
     }
 
-    function renderMessages() {
-    if (messages.length === 0) {
-        noMessagesMsg.style.display = 'block';
-        messagesContainer.innerHTML = '<div class="text-center text-gray-500 mt-8">No messages yet. Start a conversation!</div>';
-        return;
+    function startEdit(id) {
+        const msg = messages.find(m => m.id === id);
+        if (!msg) return;
+        stopTyping();
+        clearAttachment();
+        editingId = id;
+        messageInput.value = msg.content;
+        editBar.classList.remove('hidden');
+        attachBtn.disabled = true;
+        attachBtn.classList.add('opacity-50');
+        messageInput.focus();
     }
 
-    messagesContainer.innerHTML = messages.map(msg => {
-        const isOwnMessage = msg.sender === currentUser;
+    function cancelEdit() {
+        if (!editingId) return;
+        editingId = null;
+        messageInput.value = '';
+        editBar.classList.add('hidden');
+        attachBtn.disabled = false;
+        attachBtn.classList.remove('opacity-50');
+    }
+
+    function deleteMessage(id) {
+        if (!confirm('Delete this message for everyone?')) return;
+        sendEvent({ type: 'delete', message_id: id });
+    }
+
+    // Uploads go up first; the message then refers to the attachment by ID
+    async function uploadFile(file) {
+        if (!file || !activeId || editingId) return;
+        if (file.size > MAX_UPLOAD_BYTES) {
+            showToast('Files must be 10 MB or smaller');
+            return;
+        }
+        uploading = true;
+        renderAttachmentBar();
+        try {
+            const form = new FormData();
+            form.append('file', file);
+            pendingAttachment = await apiCall('/upload', { method: 'POST', body: form });
+        } catch (err) {
+            pendingAttachment = null;
+            showToast(err.message);
+        } finally {
+            uploading = false;
+            fileInput.value = '';
+            renderAttachmentBar();
+        }
+    }
+
+    function clearAttachment() {
+        pendingAttachment = null;
+        renderAttachmentBar();
+    }
+
+    function renderAttachmentBar() {
+        if (uploading) {
+            attachmentName.textContent = 'Uploading…';
+            removeAttachmentBtn.classList.add('hidden');
+            attachmentBar.classList.remove('hidden');
+        } else if (pendingAttachment) {
+            attachmentName.textContent = `📎 ${pendingAttachment.filename} (${formatSize(pendingAttachment.size)})`;
+            removeAttachmentBtn.classList.remove('hidden');
+            attachmentBar.classList.remove('hidden');
+        } else {
+            attachmentBar.classList.add('hidden');
+        }
+    }
+
+    // Render functions
+    function userAvatar(username, highlight) {
+        const online = onlineUsers.has(username);
         return `
-            <div class="flex ${isOwnMessage ? 'justify-end' : 'justify-start'} message-bubble">
+            <div class="relative flex-shrink-0">
+                <div class="${highlight ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'} w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200">
+                    ${escapeHtml(username.charAt(0).toUpperCase())}
+                </div>
+                <span title="${online ? 'Online' : 'Offline'}" class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${online ? 'bg-green-400' : 'bg-gray-300'}"></span>
+            </div>`;
+    }
+
+    function conversationAvatar(conv, highlight) {
+        if (conv.kind === 'dm') return userAvatar(otherMember(conv), highlight);
+        return `
+            <div class="${highlight ? 'bg-indigo-500 text-white' : 'bg-indigo-100 text-indigo-600'} w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200">
+                ${icon('group')}
+            </div>`;
+    }
+
+    function previewText(conv) {
+        const msg = conv.last_message;
+        if (!msg) {
+            if (conv.kind === 'dm') return 'No messages yet';
+            return `Created by ${conv.created_by === currentUser ? 'you' : conv.created_by}`;
+        }
+        const who = msg.sender === currentUser ? 'You: ' : conv.kind === 'group' ? `${msg.sender}: ` : '';
+        if (msg.deleted_at) return `${who}Message deleted`;
+        return who + (msg.content || (msg.attachment ? `📎 ${msg.attachment.filename}` : ''));
+    }
+
+    function renderConversations() {
+        if (conversations.length === 0) {
+            conversationList.innerHTML = '<p class="p-4 text-sm text-center text-gray-500">No chats yet. Pick someone below to say hi.</p>';
+            updateTitle();
+            return;
+        }
+
+        conversationList.innerHTML = conversations.map(conv => {
+            const active = conv.id === activeId;
+            const typers = typingNames(conv.id);
+            const preview = typers.length
+                ? `<span class="text-green-500">${escapeHtml(typingText(conv, typers))}</span>`
+                : escapeHtml(previewText(conv));
+            const unread = conv.unread_count > 0
+                ? `<span class="ml-2 flex-shrink-0 bg-blue-500 text-white text-xs font-semibold rounded-full min-w-[1.25rem] h-5 px-1.5 flex items-center justify-center">${conv.unread_count > 99 ? '99+' : conv.unread_count}</span>`
+                : '';
+            return `
+                <div class="user-item p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${active ? 'bg-blue-50 border-blue-200' : ''}" data-conversation="${conv.id}">
+                    <div class="flex items-center space-x-3">
+                        ${conversationAvatar(conv, active)}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-baseline justify-between">
+                                <h3 class="font-medium text-gray-800 truncate">${escapeHtml(conversationName(conv))}</h3>
+                                <span class="ml-2 flex-shrink-0 text-xs ${conv.unread_count ? 'text-blue-500' : 'text-gray-400'}">${conv.last_message ? formatListTime(conv.last_message.created_at) : ''}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm truncate ${conv.unread_count ? 'text-gray-800 font-medium' : 'text-gray-500'}">${preview}</p>
+                                ${unread}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+        updateTitle();
+    }
+
+    function renderPeople() {
+        const online = users.filter(u => onlineUsers.has(u.username)).length;
+        onlineCount.textContent = `· ${online} online`;
+
+        if (users.length === 0) {
+            peopleList.innerHTML = '<p class="p-4 text-sm text-center text-gray-500">No other users yet</p>';
+            return;
+        }
+
+        const sorted = [...users].sort((a, b) =>
+            onlineUsers.has(b.username) - onlineUsers.has(a.username) || a.username.localeCompare(b.username));
+        peopleList.innerHTML = sorted.map(u => {
+            const isOnline = onlineUsers.has(u.username);
+            return `
+                <div class="user-item p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-all duration-200" data-user="${escapeHtml(u.username)}">
+                    <div class="flex items-center space-x-3 animate-slide-in">
+                        ${userAvatar(u.username, false)}
+                        <div class="min-w-0">
+                            <h3 class="font-medium text-gray-800 truncate">${escapeHtml(u.username)}</h3>
+                            <p class="text-sm ${isOnline ? 'text-green-500' : 'text-gray-400'}">${isOnline ? 'Online' : 'Offline'}</p>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    function renderPresence() {
+        renderPeople();
+        renderConversations();
+        renderChatHeader();
+    }
+
+    function renderTyping(convId) {
+        renderConversations();
+        if (convId === activeId) renderChatHeader();
+    }
+
+    function renderChatHeader() {
+        const conv = findConversation(activeId);
+        if (!conv) return;
+        chatTitle.textContent = conversationName(conv);
+        chatAvatar.innerHTML = conversationAvatar(conv, true);
+
+        const typers = typingNames(conv.id);
+        if (typers.length) {
+            chatSubtitle.textContent = typingText(conv, typers);
+            chatSubtitle.className = 'text-sm text-green-500 truncate';
+        } else if (conv.kind === 'dm') {
+            const online = onlineUsers.has(otherMember(conv));
+            chatSubtitle.textContent = online ? 'Online' : 'Offline';
+            chatSubtitle.className = `text-sm truncate ${online ? 'text-green-500' : 'text-gray-400'}`;
+        } else {
+            const names = conv.members.map(m => m.username === currentUser ? 'you' : m.username);
+            const count = conv.members.length === 1 ? '1 member' : `${conv.members.length} members`;
+            chatSubtitle.textContent = `${count} · ${names.join(', ')}`;
+            chatSubtitle.className = 'text-sm text-gray-500 truncate';
+        }
+
+        const isGroup = conv.kind === 'group';
+        addMembersBtn.classList.toggle('hidden', !isGroup);
+        leaveGroupBtn.classList.toggle('hidden', !isGroup);
+        // Only a group's creator may wipe it for everyone
+        deleteHistoryBtn.classList.toggle('hidden', isGroup && conv.created_by !== currentUser);
+    }
+
+    // ✓ sent, ✓✓ read. In groups, ✓✓ goes bright once everyone has read it
+    function renderReceipt(msg, conv) {
+        const others = conv.members.filter(m => m.username !== currentUser);
+        const readers = others.filter(m => m.last_read_id >= msg.id).map(m => m.username);
+        const everyone = others.length > 0 && readers.length === others.length;
+        const label = readers.length === 0 ? 'Sent'
+            : conv.kind === 'dm' ? 'Read'
+            : `Seen by ${readers.join(', ')}`;
+        return `<span title="${escapeHtml(label)}" class="${everyone ? 'text-white font-bold' : 'text-blue-200'}">${readers.length ? '✓✓' : '✓'}</span>`;
+    }
+
+    function renderAttachment(att, own) {
+        if (!att) return '';
+        if (INLINE_IMAGE_TYPES.includes(att.content_type)) {
+            // Fixed height so images loading in don't shift the scroll position
+            return `
+                <a href="${attachmentUrl(att)}" target="_blank" rel="noopener" class="block mb-1">
+                    <img src="${attachmentUrl(att)}" alt="${escapeHtml(att.filename)}" loading="lazy" class="h-48 max-w-full rounded-lg object-cover bg-gray-100">
+                </a>`;
+        }
+        return `
+            <a href="${attachmentUrl(att, true)}" class="flex items-center space-x-3 mb-1 p-2 rounded-lg ${own ? 'bg-white bg-opacity-20 hover:bg-opacity-30' : 'bg-gray-100 hover:bg-gray-200'}">
+                ${icon('file', 'w-8 h-8 flex-shrink-0')}
+                <div class="min-w-0">
+                    <p class="text-sm font-medium truncate">${escapeHtml(att.filename)}</p>
+                    <p class="text-xs opacity-75">${formatSize(att.size)}</p>
+                </div>
+            </a>`;
+    }
+
+    function renderMessage(msg, prev, conv, animate) {
+        const own = msg.sender === currentUser;
+        const deleted = !!msg.deleted_at;
+        const sameSender = prev && prev.sender === msg.sender;
+        const showSender = conv.kind === 'group' && !own && !sameSender;
+
+        const body = deleted
+            ? `<p class="italic ${own ? 'text-blue-100' : 'text-gray-400'}">This message was deleted</p>`
+            : renderAttachment(msg.attachment, own) +
+              (msg.content ? `<p class="break-words whitespace-pre-wrap">${linkify(escapeHtml(msg.content))}</p>` : '');
+
+        const actions = own && !deleted ? `
+            <div class="flex items-center mr-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                <button data-action="edit" data-id="${msg.id}" title="Edit" class="p-1 text-gray-400 hover:text-blue-500">${icon('edit', 'w-4 h-4')}</button>
+                <button data-action="delete" data-id="${msg.id}" title="Delete" class="p-1 text-gray-400 hover:text-red-500">${icon('trash', 'w-4 h-4')}</button>
+            </div>` : '';
+
+        return `
+            <div class="group flex items-center ${own ? 'justify-end' : 'justify-start'} ${sameSender ? 'mt-1' : 'mt-4'} ${animate ? 'message-bubble' : ''}">
+                ${actions}
                 <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl shadow-sm ${
-                    isOwnMessage
+                    own
                         ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-sm'
                         : 'bg-white text-gray-800 rounded-bl-sm border border-gray-100'
                 }">
-                    <p class="break-words">${linkify(msg.content)}</p>
-                    <p class="text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}">
-                        ${formatTime(msg.created_at)}
+                    ${showSender ? `<p class="text-xs font-semibold text-indigo-600 mb-1">${escapeHtml(msg.sender)}</p>` : ''}
+                    ${body}
+                    <p class="text-xs mt-1 flex items-center justify-end space-x-1 ${own ? 'text-blue-100' : 'text-gray-500'}">
+                        ${msg.edited_at && !deleted ? '<span>edited ·</span>' : ''}
+                        <span>${formatTime(msg.created_at)}</span>
+                        ${own && !deleted ? renderReceipt(msg, conv) : ''}
                     </p>
                 </div>
-            </div>
-        `;
-    }).join('');
+            </div>`;
+    }
 
-    setTimeout(scrollToBottom, 100);
-}
+    // scroll: 'bottom' jumps to the newest message, 'keep' holds the current
+    // position, 'none' leaves it to the caller
+    function renderMessages(scroll = 'keep', animateId = null) {
+        const conv = findConversation(activeId);
+        if (!conv) return;
+        const oldTop = messagesContainer.scrollTop;
 
+        if (messages.length === 0) {
+            messageList.innerHTML = `
+                <div class="text-center text-gray-500 mt-8">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <p>No messages yet. Start a conversation!</p>
+                </div>`;
+            return;
+        }
 
-    async function selectUser(user) {
-        selectedUser = user;
-        selectedUserName.textContent = user;
-        
-        welcomeScreen.classList.add('hidden');
-        chatWindow.classList.remove('hidden');
-        
-        await fetchHistory(currentUser, user);
-        renderUsers();
-        
-        if (isMobile) {
-            updateResponsive();
+        const top = hasMore
+            ? '<div class="text-center text-xs text-gray-400 py-2">Loading earlier messages…</div>'
+            : '<div class="text-center text-xs text-gray-400 py-2">This is the beginning of the conversation</div>';
+        messageList.innerHTML = top + messages
+            .map((msg, i) => renderMessage(msg, messages[i - 1], conv, msg.id === animateId))
+            .join('');
+
+        if (scroll === 'bottom') scrollToBottom();
+        else if (scroll === 'keep') messagesContainer.scrollTop = oldTop;
+    }
+
+    function updateTitle() {
+        const unread = conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+        document.title = unread ? `(${unread}) Modern Chat App` : 'Modern Chat App';
+    }
+
+    // Group dialog: create a group, or add people to the open one
+    function openGroupModal(mode) {
+        const conv = findConversation(activeId);
+        if (mode === 'add' && !conv) return;
+        groupModalMode = mode;
+
+        const already = mode === 'add' ? conv.members.map(m => m.username) : [];
+        const candidates = users
+            .map(u => u.username)
+            .filter(u => !already.includes(u))
+            .sort((a, b) => a.localeCompare(b));
+
+        groupModalTitle.textContent = mode === 'add' ? `Add people to ${conv.name}` : 'New group';
+        groupNameInput.classList.toggle('hidden', mode === 'add');
+        groupNameInput.value = '';
+        groupSubmitBtn.textContent = mode === 'add' ? 'Add' : 'Create';
+        groupModalError.classList.add('hidden');
+        groupUserList.innerHTML = candidates.length
+            ? candidates.map(u => `
+                <label class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" value="${escapeHtml(u)}" class="w-4 h-4 text-blue-500 rounded">
+                    <span class="flex-1 text-gray-800">${escapeHtml(u)}</span>
+                    <span class="w-2 h-2 rounded-full ${onlineUsers.has(u) ? 'bg-green-400' : 'bg-gray-300'}"></span>
+                </label>`).join('')
+            : '<p class="px-3 py-2 text-sm text-gray-500">Everyone is already here</p>';
+
+        groupModal.classList.remove('hidden');
+        if (mode === 'create') groupNameInput.focus();
+    }
+
+    function closeGroupModal() {
+        groupModal.classList.add('hidden');
+    }
+
+    function showGroupModalError(message) {
+        groupModalError.textContent = message;
+        groupModalError.classList.remove('hidden');
+    }
+
+    async function submitGroupModal() {
+        const selected = [...groupUserList.querySelectorAll('input:checked')].map(input => input.value);
+        if (groupModalMode === 'create' && !groupNameInput.value.trim()) {
+            showGroupModalError('Give the group a name');
+            return;
+        }
+        if (!selected.length) {
+            showGroupModalError('Pick at least one person');
+            return;
+        }
+
+        groupSubmitBtn.disabled = true;
+        try {
+            if (groupModalMode === 'create') {
+                const conv = await apiCall('/conversations', {
+                    method: 'POST',
+                    body: JSON.stringify({ kind: 'group', name: groupNameInput.value.trim(), members: selected })
+                });
+                upsertConversation(conv);
+                closeGroupModal();
+                openConversation(conv.id);
+            } else {
+                const conv = await apiCall(`/conversations/${activeId}/members`, {
+                    method: 'POST',
+                    body: JSON.stringify({ usernames: selected })
+                });
+                upsertConversation(conv);
+                closeGroupModal();
+            }
+        } catch (err) {
+            showGroupModalError(err.message);
+        } finally {
+            groupSubmitBtn.disabled = false;
         }
     }
 
-    function linkify(text) {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-    return text.replace(urlRegex, function(url) {
-        let hyperlink = url;
-        if (!hyperlink.startsWith('http')) {
-            hyperlink = 'http://' + hyperlink;
-        }
-        return `<a href="${hyperlink}" target="_blank" class="text-blue-500 underline">${url}</a>`;
-    });
-}
-
-
     function logout() {
+        stopTyping();
         localStorage.removeItem('chatToken');
         localStorage.removeItem('chatUser');
-        if (ws) ws.close();
-        
+        clearTimeout(reconnectTimer);
+        const socket = ws;
+        ws = null; // so its onclose doesn't reconnect
+        if (socket) socket.close();
+
+        cancelEdit();
+        clearAttachment();
+        for (const convTyping of Object.values(typing)) {
+            Object.values(convTyping).forEach(clearTimeout);
+        }
+        Object.keys(typing).forEach(id => delete typing[id]);
+
         currentUser = '';
         token = '';
-        selectedUser = '';
-        ws = null;
+        activeId = null;
+        needsResync = false;
         users = [];
+        onlineUsers = new Set();
+        conversations = [];
         messages = [];
-        
+
+        closeGroupModal();
         chatScreen.classList.add('hidden');
         authScreen.classList.remove('hidden');
         welcomeScreen.classList.remove('hidden');
         chatWindow.classList.add('hidden');
         usernameInput.value = '';
         passwordInput.value = '';
+        document.title = 'Modern Chat App';
         hideError();
     }
 
     function toggleAuthMode() {
         isRegistering = !isRegistering;
         hideError();
-        
+
         if (isRegistering) {
             authTitle.textContent = 'Create Account';
             authSubtitle.textContent = 'Sign up to start chatting';
@@ -627,33 +1511,85 @@
     toggleAuth.addEventListener('click', toggleAuthMode);
     logoutBtn.addEventListener('click', logout);
     deleteHistoryBtn.addEventListener('click', deleteHistory);
+    addMembersBtn.addEventListener('click', () => openGroupModal('add'));
+    leaveGroupBtn.addEventListener('click', leaveGroup);
+    newGroupBtn.addEventListener('click', () => openGroupModal('create'));
+    groupCancelBtn.addEventListener('click', closeGroupModal);
+    groupSubmitBtn.addEventListener('click', submitGroupModal);
+    groupModal.addEventListener('click', (e) => { if (e.target === groupModal) closeGroupModal(); });
+    groupModal.addEventListener('input', () => groupModalError.classList.add('hidden'));
+    groupNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitGroupModal(); });
     sendBtn.addEventListener('click', sendMessage);
-    backBtn.addEventListener('click', showSidebar);
+    backBtn.addEventListener('click', closeChat);
     mobileUsersBtn.addEventListener('click', showSidebar);
+    cancelEditBtn.addEventListener('click', cancelEdit);
+    attachBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => uploadFile(fileInput.files[0]));
+    removeAttachmentBtn.addEventListener('click', clearAttachment);
 
     usernameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
     passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
-    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.isComposing) sendMessage();
+        if (e.key === 'Escape') cancelEdit();
+    });
+    messageInput.addEventListener('input', onComposerInput);
+    messageInput.addEventListener('paste', (e) => {
+        const file = e.clipboardData?.files?.[0];
+        if (file) {
+            e.preventDefault();
+            uploadFile(file);
+        }
+    });
+    chatWindow.addEventListener('dragover', (e) => e.preventDefault());
+    chatWindow.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadFile(e.dataTransfer?.files?.[0]);
+    });
 
+    conversationList.addEventListener('click', (e) => {
+        const item = e.target.closest('[data-conversation]');
+        if (item) openConversation(Number(item.dataset.conversation));
+    });
+    peopleList.addEventListener('click', (e) => {
+        const item = e.target.closest('[data-user]');
+        if (item) openDM(item.dataset.user);
+    });
+    messagesContainer.addEventListener('click', (e) => {
+        const button = e.target.closest('[data-action]');
+        if (!button) return;
+        const id = Number(button.dataset.id);
+        if (button.dataset.action === 'edit') startEdit(id);
+        if (button.dataset.action === 'delete') deleteMessage(id);
+    });
+    let lastScrollTop = 0;
+    messagesContainer.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+        // Only scrolling up unpins from the newest message. Scroll events can also
+        // arrive after content grew under us, and those mustn't count.
+        if (scrollHeight - scrollTop - clientHeight < 80) atBottom = true;
+        else if (scrollTop < lastScrollTop) atBottom = false;
+        lastScrollTop = scrollTop;
+        if (scrollTop < 120) loadOlder();
+    });
+    // Messages can grow after they're rendered (Tailwind generating CSS for new
+    // classes, images loading), so stay pinned to the newest one if we were there
+    new ResizeObserver(() => { if (atBottom) scrollToBottom(); }).observe(messageList);
+
+    // Coming back to the tab counts as reading what arrived meanwhile
+    window.addEventListener('focus', markRead);
+    document.addEventListener('visibilitychange', markRead);
     window.addEventListener('resize', updateResponsive);
 
     // Check for existing token on page load
     window.addEventListener('DOMContentLoaded', () => {
         const savedToken = localStorage.getItem('chatToken');
         const savedUser = localStorage.getItem('chatUser');
-        
+
         if (savedToken && savedUser) {
             token = savedToken;
             currentUser = savedUser;
-            currentUsername.textContent = savedUser;
-            
-            authScreen.classList.add('hidden');
-            chatScreen.classList.remove('hidden');
-            
-            fetchUsers().then(() => {
-                setupWebSocket();
-                updateResponsive();
-            });
+            startSession();
         }
     });
 </script>

@@ -1,28 +1,31 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("SELECT username FROM users")
+type userStatus struct {
+	Username string `json:"username"`
+	Online   bool   `json:"online"`
+}
+
+func usersHandler(w http.ResponseWriter, r *http.Request, user string) {
+	rows, err := db.Query("SELECT username FROM users ORDER BY username")
 	if err != nil {
-		http.Error(w, "DB error", http.StatusInternalServerError)
+		writeError(w, err)
 		return
 	}
 	defer rows.Close()
 
-	var users []string
+	users := []userStatus{}
 	for rows.Next() {
 		var username string
 		if err := rows.Scan(&username); err == nil {
-			users = append(users, username)
+			users = append(users, userStatus{Username: username, Online: chatHub.isOnline(username)})
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string][]string{
-    "users": users,
-    })
+	writeJSON(w, http.StatusOK, map[string][]userStatus{
+		"users": users,
+	})
 }
